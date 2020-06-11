@@ -1,0 +1,78 @@
+#ifndef CRC_H_
+#define CRC_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Source:
+ * http://www.barrgroup.com/Embedded-Systems/How-To/CRC-Calculation-C-Code
+ * Test:
+ * http://www.zorc.breitbandkatze.de/crc.html
+ */
+/**********************************************************************
+ * Copyright (c) 2000 by Michael Barr.  This software is placed into
+ * the public domain and may be used for any purpose.  However, this
+ * notice must not be changed or removed and no warranty is either
+ * expressed or implied by its publication or distribution.
+ **********************************************************************/
+
+/*
+ * Select the CRC standard from the list that follows.
+ */
+#define CRC16
+
+
+#if defined(CRC_CCITT)
+
+typedef unsigned short  crc;
+
+#define CRC_NAME			"CRC-CCITT"
+#define POLYNOMIAL			0x1021
+#define INITIAL_REMAINDER	0xFFFF
+#define FINAL_XOR_VALUE		0x0000
+#define REFLECT_DATA		FALSE
+#define REFLECT_REMAINDER	FALSE
+#define CHECK_VALUE			0x29B1
+
+#elif defined(CRC16)
+
+typedef unsigned short  crc;
+
+#define CRC_NAME			"CRC-16"
+#define POLYNOMIAL			0x8FDB
+#define INITIAL_REMAINDER	0xFFFF
+#define FINAL_XOR_VALUE		0xFFFF
+#define REFLECT_DATA		TRUE
+#define REFLECT_REMAINDER	TRUE
+
+#elif defined(CRC32)
+
+typedef unsigned long  crc;
+
+#define CRC_NAME			"CRC-32"
+#define POLYNOMIAL			0x04C11DB7
+#define INITIAL_REMAINDER	0xFFFFFFFF
+#define FINAL_XOR_VALUE		0xFFFFFFFF
+#define REFLECT_DATA		TRUE
+#define REFLECT_REMAINDER	TRUE
+#define CHECK_VALUE			0xCBF43926
+
+#else
+
+#error "One of CRC_CCITT, CRC16, or CRC32 must be #define'd."
+
+#endif
+
+
+void  crcInit(void);
+crc   crcSlow(unsigned char const message[], unsigned int nBytes);
+crc   crcFast(unsigned char const message[], unsigned int nBytes);
+
+unsigned long reflect(unsigned long data, unsigned char nBits);   /* added to be used in DF CRC32 calculation*/
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* CRC_H_ */
